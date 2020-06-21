@@ -25,9 +25,17 @@ public class UserService {
         return null;
     }
 
-    public void registerUser(User user) {
+    public String registerUser(User user) {
+        for(Map.Entry<Integer, User> entry : userMap.entrySet()) {
+            if(entry.getValue().getUsername().equals(user.getUsername())) {
+                return "exist";
+            }
+        }
         int userId = userMap.size() + 1;
+        user.setId(userId);
         userMap.put(userId, user);
+
+        return "not exist";
     }
 
 

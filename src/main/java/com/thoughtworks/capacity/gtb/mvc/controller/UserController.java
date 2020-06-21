@@ -5,6 +5,7 @@ import com.thoughtworks.capacity.gtb.mvc.dao.User;
 import com.thoughtworks.capacity.gtb.mvc.dao.dto.UserLoginRequest;
 import com.thoughtworks.capacity.gtb.mvc.dao.dto.UserLoginResponse;
 import com.thoughtworks.capacity.gtb.mvc.service.UserService;
+import com.thoughtworks.capacity.gtb.mvc.service.exception.UserHasExistException;
 import com.thoughtworks.capacity.gtb.mvc.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,8 +38,11 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<RegisterUserRequest> register(@Valid @RequestBody RegisterUserRequest registerUserRequest) {
         User validUser = registerUserRequest.createUser();
-        userService.registerUser(validUser);
-
+        String result = userService.registerUser(validUser);
+        if(result.equals("exist")) {
+            throw new UserHasExistException("用户已存在");
+        }else{
         return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
     }
 }
